@@ -17,7 +17,6 @@ const validationSchema = Yup.object({
 
 const Dashboard = () => {
     const [selectedImage, setSelectedImage] = useState(null);
-    const [findClass, setFindClass] = React.useState();
     const [selectedLocation, setSelectedLocation] = React.useState();
     const handleChangeSelect = (event) => {
         setSelectedLocation(event.target.value);
@@ -39,11 +38,7 @@ const Dashboard = () => {
         console.log("handleSubmitSelectedImage", selectedImage);
         console.log("selectedLocation", selectedLocation);
     };
-    const handleChange = (event) => {
-        console.log("Selected value:", event.target.value);
-        setFindClass(event.target.value);
 
-    };
     return (
         <Formik
             initialValues={{
@@ -120,28 +115,6 @@ const Dashboard = () => {
                                         <PhotoCameraIcon />
                                     </IconButton>
                                 </Box>
-
-
-                                {/* <TextField
-                                    onChange={(event) => {
-                                        handleFileChange(event, "image");
-                                        setFieldValue(
-                                            "image",
-                                            event.currentTarget.files[0]
-                                        );
-                                    }}
-                                    required
-                                    name="image"
-                                    type="file"
-                                    margin="normal"
-                                    sx={{ marginBottom: "0px", width: "100%" }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <CameraAltIcon fontSize={"small"} color={"success"} />
-                                        ),
-                                    }}
-                                /> */}
-
                             </Div>
                             <Grid container spacing={2} padding={2}>
                                 <Grid item sm={6} xs={12}>

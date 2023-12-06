@@ -1,13 +1,25 @@
 import React from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Toppng from "../../images/top.png";
 import Bottompng from "../../images/bottom.png";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from 'yup';
+import Div from "../../shared/Div/Div";
 // import { MenuItem } from "@mui/joy";
+
+const validationSchema = Yup.object({
+  // type: Yup.string().required('Type is required'),
+  search: Yup.string().required('Address to postcode'),
+});
 
 const Findclass = () => {
   const [findClass, setFindClass] = React.useState("Class A");
+  const [selectedLocation, setSelectedLocation] = React.useState("tutors");
+  const handleChangeSelect = (event) => {
+    setSelectedLocation(event.target.value);
+  };
   const selectImage =
     "https://c.superprof.com/style/images/home/v4/book-new-off.svg";
   const handleChange = (event) => {
@@ -60,126 +72,157 @@ const Findclass = () => {
                 one place 🎉
               </Typography>
             </Grid>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: "2%",
-                width: "90%",
-                marginTop: "10%",
-                // border:"1px solid red",
-                marginLeft: "10%",
-                borderRadius: "30px",
-                overflow: "hidden", 
+            <Formik
+              initialValues={{
+                type: selectedLocation,
+                search: '',
+              }}
+              validationSchema={validationSchema}
+              onSubmit={(data, { setSubmitting, resetForm }) => {
+                console.log("dataFormik", data);
+                // handleSubmit(data, { setSubmitting, resetForm });
               }}
             >
-              {/* <div style={{border:"1px solid red", display:"flex", width:"100%", justifyContent: "center",
-                alignItems: "center",}}> */}
-              <select
-                id="cars"
-                name="cars"
-                value={findClass}
-                onChange={handleChange}
-                style={{
-                  color: "gray",
-                  fontSize: "18px",
-                  outline: "none",
-                  border: "none",
-                  background: "transparent",
-                  width: "100%",
-                  maxWidth: "30%",
-                  height: "78px",
+              {({ isSubmitting, setFieldValue }) => (
+                <Form>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: "2%",
+                      width: "90%",
+                      marginTop: "10%",
+                      // border:"1px solid red",
+                      marginLeft: "10%",
+                      borderRadius: "30px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <FormControl fullWidth>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        name="type"
+                        value={selectedLocation}
+                        sx={{
+                          color: "gray",
+                          fontSize: "18px",
+                          outline: "none",
+                          border: "none",
+                          background: "transparent",
+                          width: "100%",
+                          // maxWidth: "30%",
+                          height: "78px",
 
-                  background: "#fff",
-                  padding: "10px", // Padding
-                  backgroundImage: `url('https://c.superprof.com/style/images/home/v4/book-new-off.svg')`, // Replace with your image URL
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "10px center", // Adjust the position as needed
-                  paddingLeft: "40px",
-                  appearance: "none",
-                  position: "relative",
-                }}
-              >
-                <option
-                  style={{ fontSize: "18px", background: "#f2f2f2" }}
-                  value="tutors "
-                >
-                  Tutors
-                </option>
-                <option
-                  style={{ fontSize: "18px", background: "#f2f2f2" }}
-                  value="assessors"
-                >
-                  Assessors
-                </option>
-              </select>
-              <div
-                style={{
-                  borderLeft: "1px solid gray",
-                  height: "40px",
-                  background: "#fff"
-                }}
-              ></div>
-
-              <TextField
-                fullWidth
-                id="search"
-                placeholder="Address to Postcode"
-                InputProps={{
-                  startAdornment: (
-                    <>
-                      <img
-                        src="https://icones.pro/wp-content/uploads/2021/02/icone-de-localisation-grise.png"
-                        alt="Search Icon"
-                        style={{
-                          height: "34px",
-                          width: "50px",
-                          marginRight: "5px",
-                          filter: "grayscale(100%)",
+                          background: "#fff",
+                          padding: "10px", // Padding
+                          backgroundImage: `url('https://c.superprof.com/style/images/home/v4/book-new-off.svg')`, // Replace with your image URL
+                          backgroundRepeat: "no-repeat",
+                          backgroundPosition: "10px center", // Adjust the position as needed
+                          paddingLeft: "40px",
+                          appearance: "none",
+                          position: "relative",
+                          boxShadow: "none",
+                          ".MuiOutlinedInput-notchedOutline": { border: 0 },
+                          "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                          {
+                            border: 0,
+                          },
+                          "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                          {
+                            border: 0,
+                          },
                         }}
-                      />
-                    </>
-                  ),
-                  // endAdornment: (
+                        IconComponent={() => null}
+                        onChange={(event) => {
+                          handleChangeSelect(event);
+                          setFieldValue("type", event.target.value); // Update the Formik field
+                        }}
+                        required
+                      >
+                        <MenuItem value="tutors">Tutors</MenuItem>
+                        <MenuItem value="assessors">Assessors</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <div
+                      style={{
+                        borderLeft: "1px solid gray",
+                        height: "40px",
+                        background: "#fff"
+                      }}
+                    ></div>
 
-                  // ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    padding: "10px", // Padding
-                    background: "#fff", // Background color
-                    position: "relative",
-                    width: "100%"
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                }}
-              />
+                    <Field
+                    as ={TextField}
+                      fullWidth
+                      id="search"
+                      name="search"
+                      type="search"
+                      placeholder="Address to Postcode"
+                      InputProps={{
+                        startAdornment: (
+                          <>
+                            <img
+                              src="https://icones.pro/wp-content/uploads/2021/02/icone-de-localisation-grise.png"
+                              alt="Search Icon"
+                              style={{
+                                height: "34px",
+                                width: "50px",
+                                marginRight: "5px",
+                                filter: "grayscale(100%)",
+                              }}
+                            />
+                          </>
+                        ),
+                        // endAdornment: (
 
-              {/* </div> */}
-              <Button
-                sx={{
-                  minWidth: "18%",
-                  height: "75px",
-                  background: "#ff7002",
-                  color: "#fff",
-                  // borderRadius: "10px", // Border radius
-                  // marginLeft: "10px", // Add some margin for spacing
-                }}
-                variant="contained"
-              >
-                Search
-              </Button>
-            </Box>
+                        // ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          padding: "10px", // Padding
+                          background: "#fff", // Background color
+                          position: "relative",
+                          width: "100%"
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                      }}
+                    />
+                    
+
+                    {/* </div> */}
+                    <Button
+                      type="submit"
+                      sx={{
+                        minWidth: "18%",
+                        height: "75px",
+                        background: "#ff7002",
+                        color: "#fff",
+                        // borderRadius: "10px", // Border radius
+                        // marginLeft: "10px", // Add some margin for spacing
+                      }}
+                      variant="contained"
+                    >
+                      Search
+                    </Button>
+                  </Box>
+                  <Div style={{display:"flex", justifyContent:"center", paddingLeft:"30%", color:"red"}}>
+                  <ErrorMessage name="search" component="div"  />
+
+                  </Div>
+
+                </Form>
+              )}
+            </Formik>
           </Grid>
 
           <Grid

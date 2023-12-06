@@ -22,13 +22,13 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 const style = {
     background: "#1b0d01",
-    // height: "100%",
-    // paddingTop: "100px",
-    // paddingBottom: "100px",
+    height: "100%",
+    paddingTop: "100px",
+    paddingBottom: "100px",
     fontSize: "18px",
     fontFamily: "Red Hat Text,Arial,Helvetica,sans-serif",
     color: "#fff",
-    // overflowX: "hidden"
+    overflowX: "hidden"
 }
 export default function Footer() {
     const [selectedLocation, setSelectedLocation] = React.useState('Select an Academy');
@@ -40,7 +40,7 @@ export default function Footer() {
         <>
           <Box sx={style}>
             <Grid container spacing={2}>
-                <Grid item sm={3}>
+                <Grid item sm={4} display={"flex"} justifyContent={"center"}>
                     <Div>
                         <img style={{ paddingLeft: "25px" }} src={demofooter} alt='footer image' />
                         <Div sx={{ display: "flex", mt: 5, pl: 2.9 }}>
@@ -58,10 +58,10 @@ export default function Footer() {
 
                     </Div>
                 </Grid>
-                <Grid item sm={3}>
+                <Grid item sm={2}>
 
                 </Grid>
-                <Grid item sm={3} xs={12} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
+                <Grid item sm={3} xs={8} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
                     <Div>
                         <Div>
                             <p>About Us</p>
@@ -84,7 +84,7 @@ export default function Footer() {
                     </Div>
                 </Grid>
 
-                <Grid item sm={3} xs={12} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
+                <Grid item sm={3} xs={3} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
                     <Div>
                         <Div>
                             <p>Locations</p>
@@ -117,7 +117,7 @@ export default function Footer() {
                         </Div>
                     </Box>
                 </Grid>
-                <Grid item sm={6} xs={12} sx={{ display: "flex", textAlign: "center", gap: 4, flexDirection: { xs: 'column', sm: 'row' }, }}>
+                <Grid item sm={6} xs={10} sx={{ display: "flex", textAlign: "center",margin:"auto", gap: 4, flexDirection: {  sm: 'row', flexWrap:"wrap" }, }}>
                     <Typography>Privacy Policy</Typography>
                     <Typography>|</Typography>
                     <Typography>FAQ</Typography>
@@ -129,6 +129,5 @@ export default function Footer() {
             </Grid>
         </Box>  
         </>
-        
     );
 }
