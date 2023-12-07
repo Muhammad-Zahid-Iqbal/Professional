@@ -39,7 +39,7 @@ const Findclass = () => {
                 display: "flex",
                 justifyContent: "center",
                 flexDirection: "column",
-                minHeight: "40vh",
+                maxHeight: "40vh",
                 width: "100%",
               }}
             >
@@ -90,9 +90,8 @@ const Findclass = () => {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      marginTop: "2%",
+                      marginTop: "18%",
                       width: "90%",
-                      marginTop: "10%",
                       // border:"1px solid red",
                       marginLeft: "10%",
                       borderRadius: "30px",
@@ -250,7 +249,7 @@ const Findclass = () => {
                   src={Toppng}
                   style={{
                     position: "absolute",
-                    top: 0,
+                    top: -30,
                     left: 0,
                     width: "25%",
                     animation: "scaleAnimation 3s infinite alternate",
@@ -258,7 +257,7 @@ const Findclass = () => {
                   alt="Top Left Image"
                 />
               </div>
-              <Box sx={{ marginTop: "10%" }}>
+              <Box sx={{ marginTop: "2%" }}>
                 <img
                   src="https://img.freepik.com/free-photo/young-mother-working-from-home-with-daughter_329181-18974.jpg?w=740&t=st=1700745258~exp=1700745858~hmac=ad7c615a1015baf811a6840a0c97377abd9bb6b4f24140f8f22caba8a31809fa"
                   style={{ height: "80%", width: "80%" }}

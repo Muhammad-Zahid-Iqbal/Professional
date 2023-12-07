@@ -1,133 +1,75 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import demofooter from '../../images/demofooter.png';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
-import DateRangeIcon from '@mui/icons-material/DateRange';
 import Div from '../../shared/Div/Div';
-import { InputAdornment, MenuItem, Select, Typography } from '@mui/material';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import TwitterIcon from '@mui/icons-material/Twitter';
+import { Typography } from '@mui/material';
+import { style, menuItems, menuItems2, menuItems3,contactInfo, socialMediaIcons } from './Footerfunction';
 
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-}));
-const style = {
-    background: "#1b0d01",
-    height: "100%",
-    paddingTop: "100px",
-    paddingBottom: "100px",
-    fontSize: "18px",
-    fontFamily: "Red Hat Text,Arial,Helvetica,sans-serif",
-    color: "#fff",
-    overflowX: "hidden"
-}
+
+
 export default function Footer() {
-    const [selectedLocation, setSelectedLocation] = React.useState('Select an Academy');
-
-    const handleChange = (event) => {
-        setSelectedLocation(event.target.value);
-    };
     return (
         <>
-          <Box sx={style}>
-            <Grid container spacing={2}>
-                <Grid item sm={4} display={"flex"} justifyContent={"center"}>
-                    <Div>
-                        <img style={{ paddingLeft: "25px" }} src={demofooter} alt='footer image' />
-                        <Div sx={{ display: "flex", mt: 5, pl: 2.9 }}>
-                            <EmailIcon style={{ color: '#ff7531' }} />
-                            <p style={{ paddingLeft: 10, color: '#ff7531' }}>Make an enquiry</p>
-                        </Div>
-                        <Div sx={{ display: "flex", mt: 5, pl: 2.9 }}>
-                            <PhoneIcon />
-                            <p style={{ paddingLeft: 10 }}>Choose Academy Phone</p>
-                        </Div>
-                        <Div sx={{ display: "flex", mt: 5, pl: 2.9 }}>
-                            <DateRangeIcon />
-                            <p style={{ paddingLeft: 10 }}>Mon-Fri 9am - 5pm</p>
-                        </Div>
+            <Box sx={style}>
+                <Grid container spacing={2}>
+                    <Grid item sm={4} display={'flex'} justifyContent={'center'}>
+                        <Box>
+                            <img style={{ paddingLeft: '25px' }} src={demofooter} alt='footer image' />
+                            {contactInfo.map((info, index) => (
+                                <Box key={index} sx={{ display: 'flex', mt: 5, pl: 2.9 }}>
+                                    {info.icon}
+                                    <Typography style={{ paddingLeft: 10, color: info.color }}>
+                                        {info.text}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Box>
+                    </Grid>
+                    <Grid item sm={2}>
 
-                    </Div>
-                </Grid>
-                <Grid item sm={2}>
+                    </Grid>
+                    <Grid item sm={3} xs={8} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
+                        <Div>
+                            {menuItems2.map((item, index) => (
+                                <Div key={index} sx={{ pb: 4 }}>
+                                    <Typography>{item}</Typography>
+                                </Div>
+                            ))}
+                        </Div>
+                    </Grid>
 
+                    <Grid item sm={3} xs={3} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
+                        <Div>
+                            {menuItems3.map((item, index) => (
+                                <Div key={index} sx={{pb:4}}>
+                                    <Typography>{item}</Typography>
+                                </Div>
+                            ))}
+                        </Div>
+                    </Grid>
                 </Grid>
-                <Grid item sm={3} xs={8} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
-                    <Div>
-                        <Div>
-                            <p>About Us</p>
-                        </Div>
-                        <Div>
-                            <p>Join Us</p>
-                        </Div>
-                        <Div>
-                            <p>School Partnerships</p>
-                        </Div>
-                        <Div>
-                            <p>Franchise With Us</p>
-                        </Div>
-                        <Div>
-                            <p>FAQs</p>
-                        </Div>
-                        <Div>
-                            <p>Our Policies</p>
-                        </Div>
-                    </Div>
+                <hr style={{ width: "80%", margin: "auto", }} />
+                <Grid container spacing={2} sx={{ paddingTop: "25px", }}>
+                    <Grid item sm={6} xs={12}>
+                        <Box sx={{ paddingLeft: '20%', display: 'flex' }}>
+                            {socialMediaIcons.map((socialMedia, index) => (
+                                <Box key={socialMedia.key} sx={{ pr: index < socialMediaIcons.length - 1 ? 10 : 0 }}>
+                                    {socialMedia.icon}
+                                </Box>
+                            ))}
+                        </Box>
+                    </Grid>
+                    <Grid item sm={6} xs={10} sx={{ display: "flex", textAlign: "center", margin: "auto", gap: 4, flexDirection: { sm: 'row', flexWrap: "wrap" }, }}>
+                        {menuItems.map((item, index) => (
+                            <React.Fragment key={item}>
+                                <Typography>{item}</Typography>
+                                {index < menuItems.length - 1 && <Typography>|</Typography>}
+                            </React.Fragment>
+                        ))}
+                    </Grid>
                 </Grid>
-
-                <Grid item sm={3} xs={3} sx={{ lineHeight: "62px", display: "flex", justifyContent: "center" }}>
-                    <Div>
-                        <Div>
-                            <p>Locations</p>
-                        </Div>
-                        <Div>
-                            <p>Shop</p>
-                        </Div>
-                        <Div>
-                            <p>News</p>
-                        </Div>
-                        <Div>
-                            <p>1-on-1 Training</p>
-                        </Div>
-                    </Div>
-                </Grid>
-
-            </Grid>
-            <hr style={{ width: "80%", margin: "auto",  }} />
-            <Grid container spacing={2} sx={{ paddingTop: "25px", }}>
-                <Grid item sm={6} xs={12}>
-                    <Box sx={{ paddingLeft: "20%", display: "flex" }}>
-                        <Div sx={{ pr: 10 }}>
-                            <FacebookIcon style={{ color: '#ff7531' }} />
-                        </Div>
-                        <Div sx={{ pr: 10 }}>
-                            <InstagramIcon style={{ color: '#ff7531' }} />
-                        </Div>
-                        <Div>
-                            <TwitterIcon style={{ color: '#ff7531' }} />
-                        </Div>
-                    </Box>
-                </Grid>
-                <Grid item sm={6} xs={10} sx={{ display: "flex", textAlign: "center",margin:"auto", gap: 4, flexDirection: {  sm: 'row', flexWrap:"wrap" }, }}>
-                    <Typography>Privacy Policy</Typography>
-                    <Typography>|</Typography>
-                    <Typography>FAQ</Typography>
-                    <Typography>|</Typography>
-                    <Typography>Terms & Conditions</Typography>
-                    <Typography>|</Typography>
-                    <Typography>Sitemap</Typography>
-                </Grid>
-            </Grid>
-        </Box>  
+            </Box>
         </>
     );
 }

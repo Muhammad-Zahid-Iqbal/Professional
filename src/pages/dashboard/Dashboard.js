@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Grid, TextField, Button, Box, Typography, FormHelperText, IconButton, Avatar, Select, InputAdornment, MenuItem, InputLabel, FormControl } from '@mui/material';
 import Div from '../../shared/Div/Div';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import { postRequest } from '../../backendservices/ApiCalls';
 
 
 const validationSchema = Yup.object({
@@ -21,28 +22,64 @@ const Dashboard = () => {
     const handleChangeSelect = (event) => {
         setSelectedLocation(event.target.value);
     };
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-
+    
         if (file) {
-            setSelectedImage(URL.createObjectURL(file));
-            console.log("file", file)
+            const reader = new FileReader();
+    
+            reader.onloadend = () => {
+                const base64Data = reader.result;
+                if (base64Data) {
+                    setSelectedImage(base64Data)
+                    console.log("Image loaded successfully!", base64Data);
+                  } else {
+                    console.log("Error loading image.");
+                  }
+            };
+    
+            reader.readAsDataURL(file);
         }
     };
+    
     const handleCameraClick = () => {
         document.getElementById('fileInput').click();
     };
-    const handleSubmit = (data) => {
-        console.log("data", data);
-        console.log("handleSubmitSelectedImage", selectedImage);
-        console.log("selectedLocation", selectedLocation);
+
+    const handleSubmit = (data, setSubmitting, resetForm) => {
+        let params = {
+            firstname: data.firstname,
+            lastname: data.lastname,
+            email: data.email,
+            password: data.password
+        }
+        console.log("params", params)
+        postRequest(
+            "/updateuserdata",
+            params,
+            (response) => {
+                if (response?.data?.status === "success") {
+                    console.log("data added successfully");
+                    resetForm();
+                    // setIsSubmitted(true);
+                    // setTimeout(() => {
+                    //     setIsSubmitted(false);
+                    // }, 3000);
+                } else {
+                    console.log("response not getting")
+                }
+
+            },
+            (error) => {
+                console.log(error?.response?.data);
+            }
+        );
     };
 
     return (
         <Formik
             initialValues={{
-                image: selectedImage,
+                image: '',
                 name: '',
                 email: '',
                 education: '',
@@ -75,7 +112,7 @@ const Dashboard = () => {
                                         <img
                                             src={selectedImage}
                                             alt="Image Preview"
-                                            style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%' }}
+                                            style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%',objectFit: "cover", }}
                                         />
                                     ) : (
                                         <Avatar
@@ -185,8 +222,8 @@ const Dashboard = () => {
                                                 }}
                                                 required
                                             >
-                                                <MenuItem value="tutors">Tutors</MenuItem>
-                                                <MenuItem value="assessors">Assessors</MenuItem>
+                                                <MenuItem value="Tutors">Tutors</MenuItem>
+                                                <MenuItem value="Assessors">Assessors</MenuItem>
                                             </Select>
                                         </FormControl>
                                     </Box>
