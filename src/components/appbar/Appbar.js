@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import logo from "../../images/logo.svg";
 import gitlab from "../../images/gitlab.png";
+import { Link } from "react-router-dom";
 
 
 const drawerWidth = 240;
@@ -35,21 +36,33 @@ const Appbar = (props) => {
       </Typography>
       <Divider />
       <List>
-        <ListItem disablePadding>
+        <ListItem disablePadding component={Link} to="/">
           <ListItemButton sx={{ textAlign: "center", flexDirection: "column" }}>
-            <ListItemText>Weekly Training</ListItemText>
+            <ListItemText>FIND A CLASS</ListItemText>
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton sx={{ textAlign: "center", flexDirection: "column" }}>
-            <ListItemText>Holiday Camps</ListItemText>
+            <ListItemText>ABOUT</ListItemText>
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding to='/counselling' component={Link}>
+          <ListItemButton sx={{ textAlign: "center", flexDirection: "column" }}>
+            <ListItemText>NEWS</ListItemText>
+          </ListItemButton>
+        </ListItem>
+
+         <ListItem disablePadding to='/sign-up' component={Link}>
+          <ListItemButton sx={{ textAlign: "center", flexDirection: "column" }}>
+            <ListItemText>JOIN US</ListItemText>
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton sx={{ textAlign: "center", flexDirection: "column" }}>
-            <ListItemText>Birthday Parties</ListItemText>
+            <ListItemText>LOCATION</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>

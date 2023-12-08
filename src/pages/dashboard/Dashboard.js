@@ -5,11 +5,14 @@ import { Grid, TextField, Button, Box, Typography, FormHelperText, IconButton, A
 import Div from '../../shared/Div/Div';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { postRequest } from '../../backendservices/ApiCalls';
+import { useLocation } from 'react-router-dom';
+import styled from '@emotion/styled';
+import { useMyContext } from '../../components/vertical-default/VerticalDefault';
 
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
+    // email: Yup.string().email('Invalid email address').required('Email is required'),
     education: Yup.string().required('Education is required'),
     phone: Yup.string().required('Phone is required'),
     city: Yup.string().required('City is required'),
@@ -19,39 +22,52 @@ const validationSchema = Yup.object({
 const Dashboard = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedLocation, setSelectedLocation] = React.useState();
+    const {loginUserData} = useMyContext();
+    console.log("loginUserData",loginUserData);
+    const location = useLocation();
+
+
+
+    const useremail = location?.state?.useremail;
+    console.log("useremail", useremail)
+
     const handleChangeSelect = (event) => {
         setSelectedLocation(event.target.value);
     };
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-    
+
         if (file) {
             const reader = new FileReader();
-    
+
             reader.onloadend = () => {
                 const base64Data = reader.result;
                 if (base64Data) {
                     setSelectedImage(base64Data)
                     console.log("Image loaded successfully!", base64Data);
-                  } else {
+                } else {
                     console.log("Error loading image.");
-                  }
+                }
             };
-    
+
             reader.readAsDataURL(file);
         }
     };
-    
+
     const handleCameraClick = () => {
         document.getElementById('fileInput').click();
     };
 
     const handleSubmit = (data, setSubmitting, resetForm) => {
         let params = {
-            firstname: data.firstname,
-            lastname: data.lastname,
-            email: data.email,
-            password: data.password
+            profilepic:selectedImage,
+            education: data.education,
+            user_type: data.type,
+            email: useremail,
+            mobile:data.phone,
+            city:data.city,
+            detail: data.detail
         }
         console.log("params", params)
         postRequest(
@@ -75,13 +91,17 @@ const Dashboard = () => {
             }
         );
     };
-
+    // const ErrorText = styled('div')({
+    //     color: 'red',
+    //     fontSize: '16px',
+    //     marginTop: '-10px', // Adjust this value as needed
+    //   });
     return (
         <Formik
             initialValues={{
                 image: '',
                 name: '',
-                email: '',
+                email: useremail || '',
                 education: '',
                 type: selectedLocation || '',
                 phone: "",
@@ -90,7 +110,6 @@ const Dashboard = () => {
             }}
             validationSchema={validationSchema}
             onSubmit={(data, { setSubmitting, resetForm }) => {
-                console.log("dataFormik", data);
                 handleSubmit(data, { setSubmitting, resetForm });
             }}
         >
@@ -112,7 +131,7 @@ const Dashboard = () => {
                                         <img
                                             src={selectedImage}
                                             alt="Image Preview"
-                                            style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%',objectFit: "cover", }}
+                                            style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%', objectFit: "cover", }}
                                         />
                                     ) : (
                                         <Avatar
@@ -181,12 +200,15 @@ const Dashboard = () => {
                                             as={TextField}
                                             fullWidth
                                             label="Email"
-                                            helperText={
-                                                <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
-                                                    <ErrorMessage name="email" />
-                                                </FormHelperText>
-                                            }
+                                            sx={{ background: 'lightgrey' }}
+                                            InputProps={{
+                                                readOnly: true,
+                                            }}
+
                                         />
+                                        {/* <ErrorText>
+                                            <ErrorMessage name="email" />
+                                        </ErrorText> */}
                                     </Box>
                                 </Grid>
                                 <Grid item sm={6} xs={12}>

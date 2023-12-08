@@ -26,19 +26,17 @@ const Login = () => {
             email: data.email,
             password: data.password
         }
-        console.log("params", params)
         postRequest(
             "/login",
             params,
             (response) => {
-                console.log("response", response)
                 if (response?.data?.status === "success") {
                     console.log("data added successfully");
                     resetForm();
                     setIsSubmitted(true);
                     setTimeout(() => {
                         setIsSubmitted(false);
-                        navigate("/dash-board");
+                        navigate("/dash-board", {state:{useremail:data.email}});
                     }, 1000);
                 } else {
                     console.log("response not getting")
