@@ -4,11 +4,15 @@ import * as Yup from 'yup';
 import { Grid, TextField, Button, Box, Typography, FormHelperText, IconButton, Avatar, Select, InputAdornment, MenuItem, InputLabel, FormControl } from '@mui/material';
 import Div from '../../shared/Div/Div';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import { postRequest } from '../../backendservices/ApiCalls';
+import { useLocation } from 'react-router-dom';
+import styled from '@emotion/styled';
+import { useMyContext } from '../../components/vertical-default/VerticalDefault';
 
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
+    // email: Yup.string().email('Invalid email address').required('Email is required'),
     education: Yup.string().required('Education is required'),
     phone: Yup.string().required('Phone is required'),
     city: Yup.string().required('City is required'),
@@ -17,8 +21,16 @@ const validationSchema = Yup.object({
 
 const Dashboard = () => {
     const [selectedImage, setSelectedImage] = useState(null);
-    const [findClass, setFindClass] = React.useState();
     const [selectedLocation, setSelectedLocation] = React.useState();
+    const {loginUserData} = useMyContext();
+    console.log("loginUserData",loginUserData);
+    const location = useLocation();
+
+
+
+    const useremail = location?.state?.useremail;
+    console.log("useremail", useremail)
+
     const handleChangeSelect = (event) => {
         setSelectedLocation(event.target.value);
     };
@@ -27,29 +39,69 @@ const Dashboard = () => {
         const file = event.target.files[0];
 
         if (file) {
-            setSelectedImage(URL.createObjectURL(file));
-            console.log("file", file)
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                const base64Data = reader.result;
+                if (base64Data) {
+                    setSelectedImage(base64Data)
+                    console.log("Image loaded successfully!", base64Data);
+                } else {
+                    console.log("Error loading image.");
+                }
+            };
+
+            reader.readAsDataURL(file);
         }
     };
+
     const handleCameraClick = () => {
         document.getElementById('fileInput').click();
     };
-    const handleSubmit = (data) => {
-        console.log("data", data);
-        console.log("handleSubmitSelectedImage", selectedImage);
-        console.log("selectedLocation", selectedLocation);
-    };
-    const handleChange = (event) => {
-        console.log("Selected value:", event.target.value);
-        setFindClass(event.target.value);
 
+    const handleSubmit = (data, setSubmitting, resetForm) => {
+        let params = {
+            profilepic:selectedImage,
+            education: data.education,
+            user_type: data.type,
+            email: useremail,
+            mobile:data.phone,
+            city:data.city,
+            detail: data.detail
+        }
+        console.log("params", params)
+        postRequest(
+            "/updateuserdata",
+            params,
+            (response) => {
+                if (response?.data?.status === "success") {
+                    console.log("data added successfully");
+                    resetForm();
+                    // setIsSubmitted(true);
+                    // setTimeout(() => {
+                    //     setIsSubmitted(false);
+                    // }, 3000);
+                } else {
+                    console.log("response not getting")
+                }
+
+            },
+            (error) => {
+                console.log(error?.response?.data);
+            }
+        );
     };
+    // const ErrorText = styled('div')({
+    //     color: 'red',
+    //     fontSize: '16px',
+    //     marginTop: '-10px', // Adjust this value as needed
+    //   });
     return (
         <Formik
             initialValues={{
-                image: selectedImage,
+                image: '',
                 name: '',
-                email: '',
+                email: useremail || '',
                 education: '',
                 type: selectedLocation || '',
                 phone: "",
@@ -58,7 +110,6 @@ const Dashboard = () => {
             }}
             validationSchema={validationSchema}
             onSubmit={(data, { setSubmitting, resetForm }) => {
-                console.log("dataFormik", data);
                 handleSubmit(data, { setSubmitting, resetForm });
             }}
         >
@@ -80,7 +131,7 @@ const Dashboard = () => {
                                         <img
                                             src={selectedImage}
                                             alt="Image Preview"
-                                            style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%' }}
+                                            style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%', objectFit: "cover", }}
                                         />
                                     ) : (
                                         <Avatar
@@ -120,28 +171,6 @@ const Dashboard = () => {
                                         <PhotoCameraIcon />
                                     </IconButton>
                                 </Box>
-
-
-                                {/* <TextField
-                                    onChange={(event) => {
-                                        handleFileChange(event, "image");
-                                        setFieldValue(
-                                            "image",
-                                            event.currentTarget.files[0]
-                                        );
-                                    }}
-                                    required
-                                    name="image"
-                                    type="file"
-                                    margin="normal"
-                                    sx={{ marginBottom: "0px", width: "100%" }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <CameraAltIcon fontSize={"small"} color={"success"} />
-                                        ),
-                                    }}
-                                /> */}
-
                             </Div>
                             <Grid container spacing={2} padding={2}>
                                 <Grid item sm={6} xs={12}>
@@ -171,12 +200,15 @@ const Dashboard = () => {
                                             as={TextField}
                                             fullWidth
                                             label="Email"
-                                            helperText={
-                                                <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
-                                                    <ErrorMessage name="email" />
-                                                </FormHelperText>
-                                            }
+                                            sx={{ background: 'lightgrey' }}
+                                            InputProps={{
+                                                readOnly: true,
+                                            }}
+
                                         />
+                                        {/* <ErrorText>
+                                            <ErrorMessage name="email" />
+                                        </ErrorText> */}
                                     </Box>
                                 </Grid>
                                 <Grid item sm={6} xs={12}>
@@ -212,8 +244,8 @@ const Dashboard = () => {
                                                 }}
                                                 required
                                             >
-                                                <MenuItem value="tutors">Tutors</MenuItem>
-                                                <MenuItem value="assessors">Assessors</MenuItem>
+                                                <MenuItem value="Tutors">Tutors</MenuItem>
+                                                <MenuItem value="Assessors">Assessors</MenuItem>
                                             </Select>
                                         </FormControl>
                                     </Box>

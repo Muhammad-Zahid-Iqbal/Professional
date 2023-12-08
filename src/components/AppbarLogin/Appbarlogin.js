@@ -76,7 +76,7 @@ const Appbarlogin = (props) => {
             <Button sx={{ color: "#fff", m: 2 }} to='/' component={Link}>Find A Class</Button>
             <Button sx={{ color: "#fff", m: 2 }}>About</Button>
             <Button sx={{ color: "#fff", m: 2 }} to='/counselling' component={Link}>News</Button>
-            <Button sx={{ color: "#fff", m: 2 }}>Join US</Button>
+            <Button sx={{ color: "#fff", m: 2 }} to='/sign-up' component={Link}>Join US</Button>
             <Button sx={{ color: "#fff", m: 2 }}>Location</Button>
             <Button sx={{
               m: 1, borderColor: "#ee7925", backgroundColor: "#fff",

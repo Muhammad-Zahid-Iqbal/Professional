@@ -1,55 +1,90 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField, Button, Link, Typography, Container, CssBaseline, Grid, Box, FormHelperText, Paper } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import Div from '../../shared/Div/Div';
 import logo from '../../images/darklogo.svg'
+import Alert from '@mui/material/Alert';
 import { Link as RouterLink } from 'react-router-dom';
+import { postRequest } from '../../backendservices/ApiCalls';
 
 const validationSchema = yup.object({
     firstname: yup.string().required('First Name is required'),
     lastname: yup.string().required('Last Name is required'),
     email: yup.string('Enter email').email('Invalid email').required('Email is required'),
-    password: yup.string('Enter password').required('Password is required'),
+    password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters')
+    .matches(
+      /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z])/,
+      'Password must contain at least one number, one symbol, and one letter'
+    ),
+      confirm_password: yup.string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match')
+    .required('Confirm Password is required'),
 });
 
 
 const Signup = () => {
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
+    const handleSubmit = (data, setSubmitting, resetForm) => {
+        let params = {
+            firstname: data.firstname,
+            lastname: data.lastname,
+            email: data.email,
+            password: data.password
+        }
+        console.log("params", params)
+        postRequest(
+            "/register",
+            params,
+            (response) => {
+                if (response?.data?.status === "success") {
+                    console.log("data added successfully");
+                    resetForm();
+                    setIsSubmitted(true);
+                    setTimeout(() => {
+                        setIsSubmitted(false);
+                    }, 3000);
+                } else {
+                    console.log("response not getting")
+                }
 
-    const handleSubmit = (data, { setSubmitting, resetForm }) => {
-        console.log("data", data);
-        // Handle form submission logic here
-
-        // Example: Assume form submission is successful, then reset the form
-        resetForm();
-        setSubmitting(false);
+            },
+            (error) => {
+                console.log(error?.response?.data);
+            }
+        );
     };
 
     return (
         <>
-            <Container component="main" sx={{ height: "100vh", display: "flex", justifyContent:"center", alignItems: "center", mt: 2, }}>
+            
+            <Container component="main" sx={{ height: "110vh", display: "flex", justifyContent: "center", alignItems: "center", mt: 2, }}>
                 <CssBaseline />
-                <Paper elevation={3} sx={{ padding: "10px", height: "90%", minWidth:"50%" }}>
+                {/* {alertData.show && (<SweetAlert alertData={alertData} setAlertData={setAlertData}
+                  />
+                )} */}
+                <Paper elevation={3} sx={{ padding: "10px", height: "95%", minWidth: "50%" }}>
                     <Div>
-                        <Typography component="h1" variant="h5" sx={{p:3}}>
-                        SIGN UP
+                        <Typography component="h1" variant="h5" sx={{ p: 3 }}>
+                            SIGN UP
                         </Typography>
                         <Formik
                             initialValues={{
-                                firstname:'',
-                                lastname:'',
+                                firstname: '',
+                                lastname: '',
                                 email: '',
                                 password: '',
+                                confirm_password:''
                             }}
                             validationSchema={validationSchema}
                             onSubmit={(data, { setSubmitting, resetForm }) => {
                                 console.log("dataFormik", data)
-                                handleSubmit(data, { setSubmitting, resetForm });
+                                handleSubmit(data, setSubmitting, resetForm);
                             }}
                         >
                             <Form>
-                            <Box sx={{ mt: 1, mb: 3, pl: 2, pr: 2 }}>
+                                <Box sx={{ mt: 1, mb: 3, pl: 2, pr: 2 }}>
                                     <Field
                                         id="firstname"
                                         name="firstname"
@@ -110,19 +145,35 @@ const Signup = () => {
                                         }
                                     />
                                 </Box>
+                                 <Box  sx={{ mt: 1, mb: 3, pl: 2, pr: 2 }}>
+                                    <Field
+                                        id="confirm_password"
+                                        name="confirm_password"
+                                        type="password"
+                                        as={TextField}
+                                        fullWidth
+                                        label="Confirm Password"
+                                        helperText={
+                                            <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
+                                                <ErrorMessage name="confirm_password" />
+                                            </FormHelperText>
+                                        }
+                                    />
+                                </Box>
                                 <Box sx={{ mb: 3, pl: 2, pr: 2 }}>
-                                    <Button type="submit" fullWidth variant="contained" sx={{background:"#FFA500", height:"45px",borderRadius:"15px"}}>
+                                    <Button type="submit" fullWidth variant="contained" sx={{ background: "#FFA500", height: "45px", borderRadius: "15px" }}>
                                         Signup
                                     </Button>
                                 </Box>
+                                {isSubmitted && <Alert severity="success">You have been register successfully!</Alert>}
 
                             </Form>
                         </Formik>
-                        <Grid item p={3} > ALREADY HAVE AN ACCOUNT? 
-                                <Link to='/login' component={RouterLink} variant="body2">
-                                    LOGIN
-                                </Link>
-                            </Grid>
+                        <Grid item p={3} > ALREADY HAVE AN ACCOUNT?
+                            <Link to='/login' component={RouterLink} variant="body2">
+                                LOGIN
+                            </Link>
+                        </Grid>
                     </Div>
                 </Paper>
             </Container >
