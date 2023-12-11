@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Grid, TextField, Button, Box, Typography, FormHelperText, IconButton, Avatar, Select, InputAdornment, MenuItem, InputLabel, FormControl } from '@mui/material';
 import Div from '../../shared/Div/Div';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import { postRequest } from '../../backendservices/ApiCalls';
+import { authUserData, postRequest } from '../../backendservices/ApiCalls';
 import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useMyContext } from '../../components/vertical-default/VerticalDefault';
@@ -23,10 +23,23 @@ const Dashboard = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedLocation, setSelectedLocation] = React.useState();
     const {loginUserData} = useMyContext();
-    console.log("loginUserData",loginUserData);
+    const rowData = loginUserData;
+console.log("rowData", rowData)
     const location = useLocation();
 
-
+    // const getUserData = () => {
+    //   authUserData(
+    //     (response) => {
+    //       console.log("response222", response?.data?.data)
+    //     },
+    //     (error) => {
+    //       console.log(error?.response?.data);
+    //     }
+    //   );
+    // };
+    // useEffect(() => {
+    //     getUserData();
+    //   }, []);
 
     const useremail = location?.state?.useremail;
     console.log("useremail", useremail)
@@ -61,7 +74,7 @@ const Dashboard = () => {
 
     const handleSubmit = (data, setSubmitting, resetForm) => {
         let params = {
-            profilepic:selectedImage,
+            image:selectedImage,
             education: data.education,
             user_type: data.type,
             email: useremail,
@@ -100,13 +113,13 @@ const Dashboard = () => {
         <Formik
             initialValues={{
                 image: '',
-                name: '',
+                name: rowData?.firstname || '',
                 email: useremail || '',
-                education: '',
+                education: rowData?.education || '',
                 type: selectedLocation || '',
-                phone: "",
-                city: '',
-                detail: '',
+                phone: rowData?.mobile || '',
+                city: rowData?.city || '',
+                detail: rowData?.detail || '',
             }}
             validationSchema={validationSchema}
             onSubmit={(data, { setSubmitting, resetForm }) => {
@@ -182,11 +195,15 @@ const Dashboard = () => {
                                             as={TextField}
                                             fullWidth
                                             label="Name"
-                                            helperText={
-                                                <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
-                                                    <ErrorMessage name="name" />
-                                                </FormHelperText>
-                                            }
+                                            sx={{ background: 'lightgrey' }}
+                                            InputProps={{
+                                                readOnly: true,
+                                            }}
+                                            // helperText={
+                                            //     <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
+                                            //         <ErrorMessage name="name" />
+                                            //     </FormHelperText>
+                                            // }
                                         />
                                     </Box>
                                 </Grid>

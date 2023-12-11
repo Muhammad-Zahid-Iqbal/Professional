@@ -17,12 +17,12 @@ const reducer = (state, action) => {
 // Context Provider component
 export const MyContextProvider = ({ children }) => {
   const [loginUserData, setLoginUserData] = useState('');
-console.log("loginUserDataAPICon", loginUserData)
+  
   const getUserData = () => {
     authUserData(
       (response) => {
         console.log("response22", response?.data?.user)
-        setLoginUserData(response?.data?.user);
+        setLoginUserData(response?.data?.data);
       },
       (error) => {
         console.log(error?.response?.data);

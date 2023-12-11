@@ -30,6 +30,7 @@ const Login = () => {
             "/login",
             params,
             (response) => {
+                localStorage.setItem('token', response?.data?.token);
                 if (response?.data?.status === "success") {
                     console.log("data added successfully");
                     resetForm();
