@@ -7,8 +7,11 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { authUserData, postRequest } from '../../backendservices/ApiCalls';
 import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useMyContext } from '../../components/vertical-default/VerticalDefault';
-
+import { EditorComponent } from '../../components/EditorComponent/EditorComponent';
+import Editor from '@ckeditor/ckeditor5-build-classic';
+import { CKEditor } from '@ckeditor/ckeditor5-react'
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
@@ -22,28 +25,16 @@ const validationSchema = Yup.object({
 const Dashboard = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedLocation, setSelectedLocation] = React.useState();
-    const {loginUserData} = useMyContext();
+    const { loginUserData, setLoginUserData, getUserData, loading } = useMyContext();
     const rowData = loginUserData;
-console.log("rowData", rowData)
+    console.log("rowData", rowData)
     const location = useLocation();
-
-    // const getUserData = () => {
-    //   authUserData(
-    //     (response) => {
-    //       console.log("response222", response?.data?.data)
-    //     },
-    //     (error) => {
-    //       console.log(error?.response?.data);
-    //     }
-    //   );
-    // };
-    // useEffect(() => {
-    //     getUserData();
-    //   }, []);
 
     const useremail = location?.state?.useremail;
     console.log("useremail", useremail)
-
+    // useEffect(()=>{
+    //     getUserData();
+    // },[useremail])
     const handleChangeSelect = (event) => {
         setSelectedLocation(event.target.value);
     };
@@ -57,6 +48,7 @@ console.log("rowData", rowData)
             reader.onloadend = () => {
                 const base64Data = reader.result;
                 if (base64Data) {
+                    localStorage.setItem('selectedImage', base64Data);
                     setSelectedImage(base64Data)
                     console.log("Image loaded successfully!", base64Data);
                 } else {
@@ -67,19 +59,24 @@ console.log("rowData", rowData)
             reader.readAsDataURL(file);
         }
     };
-
+    useEffect(() => {
+        const storedImage = localStorage.getItem('selectedImage');
+        if (storedImage) {
+            setSelectedImage(storedImage);
+        }
+    }, []);
     const handleCameraClick = () => {
         document.getElementById('fileInput').click();
     };
 
     const handleSubmit = (data, setSubmitting, resetForm) => {
         let params = {
-            image:selectedImage,
+            image: selectedImage,
             education: data.education,
             user_type: data.type,
             email: useremail,
-            mobile:data.phone,
-            city:data.city,
+            mobile: data.phone,
+            city: data.city,
             detail: data.detail
         }
         console.log("params", params)
@@ -87,6 +84,7 @@ console.log("rowData", rowData)
             "/updateuserdata",
             params,
             (response) => {
+                console.log("dashbordRepo", response)
                 if (response?.data?.status === "success") {
                     console.log("data added successfully");
                     resetForm();
@@ -109,234 +107,254 @@ console.log("rowData", rowData)
     //     fontSize: '16px',
     //     marginTop: '-10px', // Adjust this value as needed
     //   });
-    return (
-        <Formik
-            initialValues={{
-                image: '',
-                name: rowData?.firstname || '',
-                email: useremail || '',
-                education: rowData?.education || '',
-                type: selectedLocation || '',
-                phone: rowData?.mobile || '',
-                city: rowData?.city || '',
-                detail: rowData?.detail || '',
-            }}
-            validationSchema={validationSchema}
-            onSubmit={(data, { setSubmitting, resetForm }) => {
-                handleSubmit(data, { setSubmitting, resetForm });
-            }}
-        >
-            {({ isSubmitting, setFieldValue }) => (
-                <Form>
-                    <Grid container spacing={2} >
-                        <Grid item xs={12} sm={6} sx={{ margin: "auto" }}>
-                            <Div>
-                                <Box
-                                    sx={{ display: "flex", cursor: "pointer", justifyContent: "center", position: "relative" }}
-                                    p={1}
-                                    // border={1}
-                                    width={"160px"}
-                                    margin={"auto"}
-                                    mt={2}
-                                    onClick={handleCameraClick}
-                                >
-                                    {selectedImage ? (
-                                        <img
-                                            src={selectedImage}
-                                            alt="Image Preview"
-                                            style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%', objectFit: "cover", }}
-                                        />
-                                    ) : (
-                                        <Avatar
-                                            sx={{
-                                                width: '140px',
-                                                height: '140px',
-                                                borderRadius: '50%',
-                                                backgroundColor: '#f2f2f2',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                            }}
-                                        >
-                                            {/* You can customize the placeholder icon or text */}
-                                            <PhotoCameraIcon fontSize="large" color="action" />
-                                        </Avatar>
-                                    )}
-                                    <input
-                                        id="fileInput"
-                                        type="file"
-                                        style={{ display: 'none' }}
-                                        onChange={handleFileChange}
-                                        capture="environment"
-                                    />
-                                    <IconButton
-                                        sx={{
-                                            position: 'absolute',
-                                            bottom: '10px',
-                                            right: '20px',
-                                            // background: 'rgba(255, 255, 255, 0.8)',
-                                            background: 'lightblue',
-                                        }}
-                                        component="span"
-                                        size="small"
-                                        color="success"
+    if (loading) {
+        return <h1>Loading...</h1>
+    }
+    if (!loading && rowData) {
+        return (
+            <Formik
+                initialValues={{
+                    image: '',
+                    name: rowData?.firstname || '',
+                    email: useremail || '',
+                    education: rowData?.education || '',
+                    type: rowData?.user_type || '',
+                    phone: rowData?.mobile || '',
+                    city: rowData?.city || '',
+                    detail: rowData?.detail || '',
+                }}
+                validationSchema={validationSchema}
+                onSubmit={(data, { setSubmitting, resetForm }) => {
+                    handleSubmit(data, { setSubmitting, resetForm });
+                }}
+            >
+                {({ isSubmitting, setFieldValue }) => (
+                    <Form>
+                        <Grid container spacing={2} >
+                            <Grid item xs={12} sm={6} sx={{ margin: "auto" }}>
+                                <Div>
+                                    <Box
+                                        sx={{ display: "flex", cursor: "pointer", justifyContent: "center", position: "relative" }}
+                                        p={1}
+                                        // border={1}
+                                        width={"160px"}
+                                        margin={"auto"}
+                                        mt={2}
+                                        onClick={handleCameraClick}
                                     >
-                                        <PhotoCameraIcon />
-                                    </IconButton>
-                                </Box>
-                            </Div>
-                            <Grid container spacing={2} padding={2}>
-                                <Grid item sm={6} xs={12}>
-                                    <Box>
-                                        <Field
-                                            id="name"
-                                            name="name"
-                                            type="text"
-                                            as={TextField}
-                                            fullWidth
-                                            label="Name"
-                                            sx={{ background: 'lightgrey' }}
-                                            InputProps={{
-                                                readOnly: true,
+                                        {selectedImage ? (
+                                            <img
+                                                src={selectedImage}
+                                                alt="Image Preview"
+                                                style={{ cursor: "pointer", border: "1px solid lightgrey", width: '140px', height: '140px', borderRadius: '50%', objectFit: "cover", }}
+                                            />
+                                        ) : (
+                                            <Avatar
+                                                sx={{
+                                                    width: '140px',
+                                                    height: '140px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: '#f2f2f2',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                {/* You can customize the placeholder icon or text */}
+                                                <PhotoCameraIcon fontSize="large" color="action" />
+                                            </Avatar>
+                                        )}
+                                        <input
+                                            id="fileInput"
+                                            type="file"
+                                            style={{ display: 'none' }}
+                                            onChange={handleFileChange}
+                                            capture="environment"
+                                        />
+                                        <IconButton
+                                            sx={{
+                                                position: 'absolute',
+                                                bottom: '10px',
+                                                right: '20px',
+                                                // background: 'rgba(255, 255, 255, 0.8)',
+                                                background: 'lightblue',
                                             }}
+                                            component="span"
+                                            size="small"
+                                            color="success"
+                                        >
+                                            <PhotoCameraIcon />
+                                        </IconButton>
+                                    </Box>
+                                </Div>
+                                <Grid container spacing={2} padding={2}>
+                                    <Grid item sm={6} xs={12}>
+                                        <Box>
+                                            <Field
+                                                id="name"
+                                                name="name"
+                                                type="text"
+                                                as={TextField}
+                                                fullWidth
+                                                label="Name"
+                                                sx={{ background: 'lightgrey' }}
+                                                InputProps={{
+                                                    readOnly: true,
+                                                }}
                                             // helperText={
                                             //     <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
                                             //         <ErrorMessage name="name" />
                                             //     </FormHelperText>
                                             // }
-                                        />
-                                    </Box>
-                                </Grid>
+                                            />
+                                        </Box>
+                                    </Grid>
 
-                                <Grid item sm={6} xs={12}>
-                                    <Box>
-                                        <Field
-                                            id="email"
-                                            name="email"
-                                            type="email"
-                                            as={TextField}
-                                            fullWidth
-                                            label="Email"
-                                            sx={{ background: 'lightgrey' }}
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
+                                    <Grid item sm={6} xs={12}>
+                                        <Box>
+                                            <Field
+                                                id="email"
+                                                name="email"
+                                                type="email"
+                                                as={TextField}
+                                                fullWidth
+                                                label="Email"
+                                                sx={{ background: 'lightgrey' }}
+                                                InputProps={{
+                                                    readOnly: true,
+                                                }}
 
-                                        />
-                                        {/* <ErrorText>
+                                            />
+                                            {/* <ErrorText>
                                             <ErrorMessage name="email" />
                                         </ErrorText> */}
-                                    </Box>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12}>
+                                        <Box>
+                                            <Field
+                                                id="education"
+                                                name="education"
+                                                type="text"
+                                                as={TextField}
+                                                fullWidth
+                                                label="Education"
+                                                helperText={
+                                                    <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
+                                                        <ErrorMessage name="education" />
+                                                    </FormHelperText>
+                                                }
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12}>
+                                        <Box>
+                                            <FormControl fullWidth>
+                                                <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    name="type"
+                                                    value={selectedLocation}
+                                                    label="Type"
+                                                    onChange={(event) => {
+                                                        handleChangeSelect(event);
+                                                        setFieldValue("type", event.target.value); // Update the Formik field
+                                                    }}
+                                                    required
+                                                >
+                                                    <MenuItem value="Tutors">Tutors</MenuItem>
+                                                    <MenuItem value="Assessors">Assessors</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12}>
+                                        <Box>
+                                            <Field
+                                                id="phone"
+                                                name="phone"
+                                                type="number"
+                                                as={TextField}
+                                                fullWidth
+                                                label="Phone"
+                                                helperText={
+                                                    <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
+                                                        <ErrorMessage name="phone" />
+                                                    </FormHelperText>
+                                                }
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12}>
+                                        <Box>
+                                            <Field
+                                                id="city"
+                                                name="city"
+                                                type="text"
+                                                as={TextField}
+                                                fullWidth
+                                                label="City"
+                                                helperText={
+                                                    <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
+                                                        <ErrorMessage name="city" />
+                                                    </FormHelperText>
+                                                }
+                                            />
+                                        </Box>
+                                    </Grid>
                                 </Grid>
-                                <Grid item sm={6} xs={12}>
-                                    <Box>
-                                        <Field
-                                            id="education"
-                                            name="education"
-                                            type="text"
-                                            as={TextField}
-                                            fullWidth
-                                            label="Education"
-                                            helperText={
-                                                <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
-                                                    <ErrorMessage name="education" />
-                                                </FormHelperText>
-                                            }
-                                        />
-                                    </Box>
-                                </Grid>
-                                <Grid item sm={6} xs={12}>
-                                    <Box>
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">File</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                name="type"
-                                                value={selectedLocation}
-                                                label="File"
-                                                onChange={(event) => {
-                                                    handleChangeSelect(event);
-                                                    setFieldValue("type", event.target.value); // Update the Formik field
-                                                }}
-                                                required
-                                            >
-                                                <MenuItem value="Tutors">Tutors</MenuItem>
-                                                <MenuItem value="Assessors">Assessors</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    </Box>
-                                </Grid>
-                                <Grid item sm={6} xs={12}>
-                                    <Box>
-                                        <Field
-                                            id="phone"
-                                            name="phone"
-                                            type="number"
-                                            as={TextField}
-                                            fullWidth
-                                            label="Phone"
-                                            helperText={
-                                                <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
-                                                    <ErrorMessage name="phone" />
-                                                </FormHelperText>
-                                            }
-                                        />
-                                    </Box>
-                                </Grid>
-                                <Grid item sm={6} xs={12}>
-                                    <Box>
-                                        <Field
-                                            id="city"
-                                            name="city"
-                                            type="text"
-                                            as={TextField}
-                                            fullWidth
-                                            label="City"
-                                            helperText={
-                                                <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
-                                                    <ErrorMessage name="city" />
-                                                </FormHelperText>
-                                            }
-                                        />
-                                    </Box>
-                                </Grid>
+
+
+                                <Box mt={1} mb={3} pl={2} pr={2} sx={{ height: "400px" }}>
+                                    {/* <Field
+                                        id="detail"
+                                        name="detail"
+                                        type="text"
+                                        as={TextField}
+                                        fullWidth
+                                        multiline
+                                        rows={4}
+                                        label="Detail"
+                                        helperText={
+                                            <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
+                                                <ErrorMessage name="detail" />
+                                            </FormHelperText>
+                                        }
+                                    /> */}
+                                    <CKEditor
+                                        editor={ClassicEditor}
+                                        data="<p>Hello from CKEditor 5!</p>"
+                                        onInit={(editor) => {
+                                            // You can store the "editor" and use when it is needed.
+                                            // console.log("Editor is ready to use!", editor);
+                                            editor.editing.view.change((writer) => {
+                                                writer.setStyle(
+                                                    "height",
+                                                    "200px",
+                                                    editor.editing.view.document.getRoot()
+                                                );
+                                            });
+                                        }}
+                                    />
+                                </Box>
+
+                                {/* Add similar code for other fields */}
+
+                                <Box mb={3} pl={2} pr={2}>
+                                    <Button type="submit" fullWidth variant="contained" sx={{ background: "#FFA500", height: "45px", borderRadius: "15px" }}>
+                                        Signup
+                                    </Button>
+                                </Box>
                             </Grid>
 
 
-                            <Box mt={1} mb={3} pl={2} pr={2}>
-                                <Field
-                                    id="detail"
-                                    name="detail"
-                                    type="text"
-                                    as={TextField}
-                                    fullWidth
-                                    multiline
-                                    rows={4}
-                                    label="Detail"
-                                    helperText={
-                                        <FormHelperText sx={{ color: 'red', m: 0, fontSize: "16px" }}>
-                                            <ErrorMessage name="detail" />
-                                        </FormHelperText>
-                                    }
-                                />
-                            </Box>
-
-                            {/* Add similar code for other fields */}
-
-                            <Box mb={3} pl={2} pr={2}>
-                                <Button type="submit" fullWidth variant="contained" sx={{ background: "#FFA500", height: "45px", borderRadius: "15px" }}>
-                                    Signup
-                                </Button>
-                            </Box>
                         </Grid>
-
-
-                    </Grid>
-                </Form>
-            )}
-        </Formik>
-    );
+                    </Form>
+                )}
+            </Formik>
+        );
+    }
 };
 
 export default Dashboard;

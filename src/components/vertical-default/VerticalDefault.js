@@ -17,15 +17,19 @@ const reducer = (state, action) => {
 // Context Provider component
 export const MyContextProvider = ({ children }) => {
   const [loginUserData, setLoginUserData] = useState('');
+  const [loading,setLoading]=useState(null)
   
   const getUserData = () => {
+    setLoading(true)
     authUserData(
       (response) => {
         console.log("response22", response?.data?.user)
         setLoginUserData(response?.data?.data);
+        setLoading(false)
       },
       (error) => {
         console.log(error?.response?.data);
+        setLoading(false)
       }
     );
   };
@@ -47,6 +51,9 @@ export const MyContextProvider = ({ children }) => {
 
   const contextValue = {
     loginUserData,
+    setLoginUserData,
+    getUserData,
+    loading,
     state,
     setData,
     // Add functions to context value

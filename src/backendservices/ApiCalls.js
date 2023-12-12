@@ -4,7 +4,6 @@ const API_BASE_URL = 'http://localhost:8000/user/api';
 function updateAuthorizationHeader() {
     const token = localStorage.getItem('token');
     axios.defaults.headers.common['authorization'] = 'Bearer ' + token;
-    console.log("token", token)
   }
   
   export function authUserData(callback, errorCallback) {
