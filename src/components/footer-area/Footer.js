@@ -28,7 +28,7 @@ const style = {
     fontSize: "18px",
     fontFamily: "Red Hat Text,Arial,Helvetica,sans-serif",
     color: "#fff",
-    // overflowX: "hidden"
+    overflowX: "hidden"
 }
 export default function Footer() {
     const [selectedLocation, setSelectedLocation] = React.useState('Select an Academy');

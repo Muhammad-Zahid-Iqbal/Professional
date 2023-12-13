@@ -46,6 +46,9 @@ export const MyContextProvider = ({ children }) => {
   const setData = (newData) => {
     dispatch({ type: 'SET_DATA', payload: newData });
   };
+  const refreshUserData = () => {
+    getUserData();
+  };
 
   // Add more functions as needed
 
@@ -56,6 +59,7 @@ export const MyContextProvider = ({ children }) => {
     loading,
     state,
     setData,
+    refreshUserData
     // Add functions to context value
   };
 

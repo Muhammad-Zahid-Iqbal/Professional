@@ -15,7 +15,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import logo from "../../images/logo.svg";
-import gitlab from "../../images/gitlab.png";
+// import gitlab from "../../images/gitlab.png";
+import yourlogo from "../../images/yourlogo.png";
 import { Link } from "react-router-dom";
 
 
@@ -32,7 +33,7 @@ const Appbar = (props) => {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2, background:"blue" }}>
-      <img src={gitlab} alt="logo" style={{width:"100%", height:"70px"}}/>
+      <img src={yourlogo} alt="logo" style={{width:"100%",}}/>
       </Typography>
       <Divider />
       <List>
@@ -90,7 +91,7 @@ const Appbar = (props) => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
-            <img src={gitlab} alt="logo" style={{width:"20%", height:"70px"}}/>
+            <img src={yourlogo} alt="logo" style={{width:"20%", height:"70px"}}/>
           </Typography>
           <Box
             sx={{

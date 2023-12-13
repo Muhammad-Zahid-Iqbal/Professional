@@ -7,6 +7,7 @@ import logo from '../../images/darklogo.svg'
 import Alert from '@mui/material/Alert';
 import { Link as RouterLink } from 'react-router-dom';
 import { postRequest } from '../../backendservices/ApiCalls';
+import Alertdialog from '../../components/AlertDiaolog/Alertdialog';
 
 const validationSchema = yup.object({
     firstname: yup.string().required('First Name is required'),
@@ -25,7 +26,10 @@ const validationSchema = yup.object({
 
 const Signup = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
-
+    const [signupAlert, setSignUpAlert] = useState(false);
+    const handleCloseSignUp = () => {
+        setSignUpAlert(false);
+    };
     const handleSubmit = (data, setSubmitting, resetForm) => {
         let params = {
             firstname: data.firstname,
@@ -40,6 +44,7 @@ const Signup = () => {
             (response) => {
                 if (response?.data?.status === "success") {
                     console.log("data added successfully");
+                    setSignUpAlert(true);
                     resetForm();
                     setIsSubmitted(true);
                     setTimeout(() => {
@@ -59,12 +64,12 @@ const Signup = () => {
     return (
         <>
             
-            <Container component="main" sx={{ height: "110vh", display: "flex", justifyContent: "center", alignItems: "center", mt: 2, }}>
+            <Container component="main" sx={{ minHeight: "110vh", display: "flex", justifyContent: "center", alignItems: "center", mt: 2,marginBottom:"60px" }}>
                 <CssBaseline />
                 {/* {alertData.show && (<SweetAlert alertData={alertData} setAlertData={setAlertData}
                   />
                 )} */}
-                <Paper elevation={3} sx={{ padding: "10px", height: "95%", minWidth: "50%" }}>
+                <Paper elevation={3} sx={{ padding: "10px", height: "95%", minWidth: "50%", }}>
                     <Div>
                         <Typography component="h1" variant="h5" sx={{ p: 3 }}>
                             SIGN UP
@@ -177,6 +182,7 @@ const Signup = () => {
                     </Div>
                 </Paper>
             </Container >
+            <Alertdialog handleCloseSignUp={handleCloseSignUp} signupAlert={signupAlert}  setSignUpAlert={setSignUpAlert}/>
         </>
 
 

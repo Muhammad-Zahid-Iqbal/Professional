@@ -2,4 +2,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  overflow-x: hidden;
+}
+.ck-editor__editable {
+  min-height: 200px;
 }
