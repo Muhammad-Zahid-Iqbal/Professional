@@ -39,7 +39,7 @@ const Findclass = () => {
                 display: "flex",
                 justifyContent: "center",
                 flexDirection: "column",
-                maxHeight: "40vh",
+                minHeight: "40vh",
                 width: "100%",
               }}
             >
@@ -90,7 +90,7 @@ const Findclass = () => {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      marginTop: "18%",
+                      marginTop: "10%",
                       width: "90%",
                       // border:"1px solid red",
                       marginLeft: "10%",
