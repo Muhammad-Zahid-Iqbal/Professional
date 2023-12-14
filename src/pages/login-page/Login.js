@@ -56,9 +56,9 @@ const Login = () => {
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
                 <img src={logo} alt='logo header' style={{ width: "15%" }} />
             </Box>
-            <Container component="main" sx={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", }}>
+            <Container component="main" sx={{ height: "80vh", display: "flex", justifyContent: "center", alignItems: "center", }}>
                 <CssBaseline />
-                <Paper elevation={3} sx={{ padding: "10px", height: "80%", minWidth: "50%" }}>
+                <Paper elevation={3} sx={{ padding: "10px", height: "80%", maxWidth: "40%" }}>
                     {isSubmitted && <Alert severity="success">You have been Login successfully!</Alert>}
                     <Div>
                         <Typography component="h1" variant="h5" sx={{ p: 3 }}>

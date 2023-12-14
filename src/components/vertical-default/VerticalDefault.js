@@ -16,7 +16,7 @@ const reducer = (state, action) => {
 
 // Context Provider component
 export const MyContextProvider = ({ children }) => {
-  const [loginUserData, setLoginUserData] = useState('');
+  const [loginUserData, setLoginUserData] = useState(null);
   const [loading,setLoading]=useState(null)
   
   const getUserData = () => {
