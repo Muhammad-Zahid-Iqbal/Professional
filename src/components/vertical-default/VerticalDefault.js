@@ -23,7 +23,7 @@ export const MyContextProvider = ({ children }) => {
     setLoading(true)
     authUserData(
       (response) => {
-        console.log("response22", response?.data?.user)
+        console.log("response22", response?.data?.data)
         setLoginUserData(response?.data?.data);
         setLoading(false)
       },
