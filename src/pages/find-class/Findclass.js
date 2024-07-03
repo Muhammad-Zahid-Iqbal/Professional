@@ -7,7 +7,7 @@ import Bottompng from "../../images/bottom.png";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from 'yup';
 import Div from "../../shared/Div/Div";
-
+//
 const validationSchema = Yup.object({
   // type: Yup.string().required('Type is required'),
   search: Yup.string().required('Address to postcode'),
